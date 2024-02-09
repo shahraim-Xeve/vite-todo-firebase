@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import {
   collection,
   addDoc,
@@ -106,22 +104,83 @@ function Todo() {
   }
 
   return (
-    <>
-      <div
-        className="d-flex flex-column align-items-center justify-content-center vh-50"
+    <div className="flex h-screen justify-center items-center">
+      <div className="todos w-[75%] flex h-[80vh] mt-5 bg-slate-500 rounded-xl">
+        <div className="w-[55%] h-[100%] text-white flex justify-center items-center flex-col">
+          <form className="" onSubmit={handleAddTodo}>
+            <div className=" flex justify-center items-center flex-col gap-5">
+              {/* <input type="text" placeholder="Title" ref={todo} /> */}
+              <input
+                type="text"
+                placeholder="Type here"
+                className=" bg-transparent input input-bordered w-full max-w-xs"
+                ref={todo}
+              />
+              <button
+                type="submit"
+                className="btn btn-wide btn-outline btn-secondary"
+              >
+                Secondary
+              </button>
+            </div>
+          </form>
+        </div>
+        <div className="h-[98%] w-[45%] overflow-y-scroll overflow-x-hidden py-[10px]  text-white">
+          <div>
+            {todoList.map((el, ind) => (
+              <div
+                key={ind}
+                className="card w-100 bg-neutral my-2 text-neutral-content"
+              >
+                <div className="flex-row card-body py-[10px] items-center text-center">
+                  {/* <div key={ind}> */}
+                  {editIndex !== el.id ? (
+                    <p className="card-title">{el.title}</p>
+                  ) : (
+                    <input type="text" ref={val} />
+                  )}
+
+                  <div className="card-actions justify-end">
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleDel(el.id)}
+                    >
+                      Delete
+                    </button>
+                    {editIndex !== el.id ? (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleUpd(el.id)}
+                      >
+                        Edit
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleSave(el.id)}
+                      >
+                        Save
+                      </button>
+                    )}
+                  </div>
+                  {/* </div> */}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* <div
+        className="flex justify-center items-center"
         style={{ height: "50vh" }}
       >
-        <Form className="w-50" onSubmit={handleAddTodo}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Control type="text" placeholder="Title" ref={todo} />
-          </Form.Group>
+        <form className="w-50" onSubmit={handleAddTodo}>
+          <input type="text" placeholder="Title" ref={todo} />
 
-          <Button variant="primary" type="submit">
-            Add Todo
-          </Button>
-        </Form>
-      </div>
-      <div>
+          <button type="submit">Add Todo</button>
+        </form>
+      </div> */}
+      {/* <div>
         {todoList.map((el, ind) => (
           <div key={ind}>
             {editIndex !== el.id ? (
@@ -137,8 +196,8 @@ function Todo() {
             )}
           </div>
         ))}
-      </div>
-    </>
+      </div> */}
+    </div>
   );
 }
 

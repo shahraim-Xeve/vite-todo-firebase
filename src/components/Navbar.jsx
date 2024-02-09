@@ -1,32 +1,20 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, doc, getDocs, where } from "firebase/firestore";
 import { auth, db } from "../config/firebase.Config";
 
-const drawerWidth = 240;
+// ... (other imports)
 
-function DrawerAppBar(props) {
+function DrawerAppBar() {
   const [personName, setPersonName] = React.useState("");
+  const [showText, setShowText] = React.useState("Login First");
+  const [personImg, setPersonImg] = React.useState(
+    "https://yt3.googleusercontent.com/SpIXElitvVabuo9c6cudRFGfaiazamB5HTvix32ErkOh81CAezuRvPFvEi12jOZOF2_vUCFfF9s=s900-c-k-c0x00ffffff-no-rj"
+  );
   const navigate = useNavigate();
-  const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
   const [navItems, setNavItems] = React.useState([]);
+
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -41,6 +29,7 @@ function DrawerAppBar(props) {
         const { name } = userData.data();
         console.log(name);
         setPersonName(name);
+        setShowText(name)
         setNavItems(["logout"]);
       } else {
         setNavItems(["todo", "login"]);
@@ -52,6 +41,7 @@ function DrawerAppBar(props) {
   }, []);
 
   function navi(item) {
+    console.log(item);
     if (item === "logout") {
       signOut(auth)
         .then(() => {
@@ -65,91 +55,46 @@ function DrawerAppBar(props) {
     }
   }
 
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
-
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        {personName}
-      </Typography>
-      <Divider />
-      <List>
-        {navItems.map((item) => (
-          <ListItem onClick={() => navi(item)} key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </Box>
-  );
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
-
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar component="nav">
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+    <nav className="navbar bg-base-100">
+      <div className="flex-1">
+        <a className="btn btn-ghost text-xl">{personName}</a>
+      </div>
+      <div className="flex-none">
+        <ul>
+          {navItems.map((item, ind) => (
+            <li
+              className="px-3 hover:scale-105 capitalize hover:text-[#FEE698]"
+              onClick={() => navi(item)}
+              key={ind}
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+        {/* img  */}
+        <div className="dropdown dropdown-end">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn btn-ghost btn-circle avatar"
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+            <div className="w-10 rounded-full">
+              <img alt="Tailwind CSS Navbar component" src={personImg} />
+            </div>
+          </div>
+          <ul
+            tabIndex={0}
+            className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box  text-black"
           >
-            {personName}
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button
-                onClick={() => navi(item)}
-                key={item}
-                sx={{ color: "#fff" }}
-              >
-                {item}
-              </Button>
-            ))}
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <nav>
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </nav>
-    </Box>
+            <li>
+              <a>{showText}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
   );
 }
-
-DrawerAppBar.propTypes = {
-  window: PropTypes.func,
-};
 
 export default DrawerAppBar;
